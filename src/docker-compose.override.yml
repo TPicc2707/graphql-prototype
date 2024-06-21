@@ -1,0 +1,61 @@
+version: '3.4'
+
+services:
+
+  persondb:   
+    container_name: persondb
+    user: root
+    environment:
+      SA_PASSWORD: "Person12345678"
+      ACCEPT_EULA: "Y"
+    restart: always
+    ports:
+      - "1437:1433"
+    volumes:
+      - persondb-DataVolume:/var/opt/mssql/data
+
+  rabbitmq:
+    container_name: rabbitmq
+    restart: always
+    ports:
+    - "5672:5672"
+    - "15672:15672"
+
+  graphql_person:
+    container_name: graphql_person
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ConnectionStrings:PersonConnectionString=Server=persondb;Database=PersonDb;User Id=sa;Password=Person12345678;TrustServerCertificate=true"
+    depends_on:
+      - persondb
+      - rabbitmq 
+    restart: always
+    ports:
+      - "5011:8080"
+
+  graphql_person_address:
+    container_name: graphql_person_address
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ConnectionStrings:PersonAddressConnectionString=Server=persondb;Database=PersonAddressDb;User Id=sa;Password=Person12345678;TrustServerCertificate=true"
+    depends_on:
+      - persondb
+      -  rabbitmq 
+    restart: always
+    ports:
+      - "5012:8080"
+
+  graphql_gateway:
+    container_name: graphql_gateway
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+        - graphql_person
+        - graphql_person_address
+    ports:
+        - "5000:8080"
+    restart: always
+
+volumes:
+  persondb-DataVolume:
+    name: persondb-DataVolume

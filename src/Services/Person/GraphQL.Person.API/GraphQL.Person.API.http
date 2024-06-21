@@ -1,0 +1,6 @@
+@GraphQL.Person.API_HostAddress = http://localhost:5026
+
+GET {{GraphQL.Person.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,27 @@
+version: '3.4'
+
+services:
+
+  persondb:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+
+  graphql_person:
+    image: ${DOCKER_REGISTRY-}graphqlperson
+    build:
+      context: .
+      dockerfile: Services/Person/GraphQL.Person.API/Dockerfile
+
+  graphql_person_address:
+    image: ${DOCKER_REGISTRY-}graphqlpersonaddress
+    build:
+      context: .
+      dockerfile: Services/Address/GraphQL.Address.API/Dockerfile
+
+  graphql_gateway:
+    image: ${DOCKER_REGISTRY-}graphqlgateway
+    build:
+      context: .
+      dockerfile: Gateway/GraphQL.Prototype.Gateway/Dockerfile

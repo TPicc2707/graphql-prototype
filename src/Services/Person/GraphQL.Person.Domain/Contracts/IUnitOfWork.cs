@@ -1,0 +1,9 @@
+﻿namespace GraphQL.Person.Domain.Contracts
+{
+    public interface IUnitOfWork
+    {
+        IPersonRepository People { get; }
+
+        Task<int> Complete();
+    }
+}
